@@ -7,7 +7,7 @@ from utils import train_set, Log, f1_score
 from model import ConvModel
 
 
-epochs = 10
+epochs = 100
 batch_size = 32
 n_cpu = 6
 

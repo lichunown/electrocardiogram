@@ -19,7 +19,10 @@ class Log(object):
             }
     
     def __del__(self):
-        self.save_info()
+        try:
+            self.save_info()
+        except Exception:
+            pass
         
     def save_info(self):
         with open(os.path.join(self.save_model_dir, 'info.json'), 'w') as f:
@@ -37,6 +40,7 @@ class Log(object):
     def add_model_info(self, info:dict):
         for k, v in info.items():
             self.info[k] = v
+        self.save_info()
             
     def logging_flush(self, msg):
         sys.stdout.write('\r' + msg)
