@@ -2,3 +2,4 @@
 *.zip
 *.npy
 .spyproject
+__pycache__/

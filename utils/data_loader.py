@@ -2,6 +2,19 @@ import torch, os
 from torch.utils.data import Dataset
 import numpy as np
 
+class Normalize(object):
+    @staticmethod
+    def sig_normlize(sig):
+        return sig/100
+    
+    @staticmethod
+    def other_normlize(other):
+        if len(other.shape) == 1:
+            other[1] = other[1]/100
+        else:
+            other[:, 1] = other[:, 1]/100
+        return other
+    
 class ECDDataset(Dataset):
     def __init__(self, sig_dir, label_path, arrythmia_path):
         super(ECDDataset, self).__init__()
@@ -54,7 +67,9 @@ class ECDDataset(Dataset):
         y, age, m_or_f = self.label_file_dir[self.sig_names[index]]
         other_data = [age, m_or_f]  
 
-        return {'sig':sig_data, 'other':other_data, 'label':y}
+        return {'sig':Normalize.sig_normlize(sig_data).transpose(1, 0).astype('float32'), 
+                'other':Normalize.other_normlize(np.array(other_data)).astype('float32'), 
+                'label':y.astype('float32')}
     
     def __len__(self):
         return len(self.sig_names)
