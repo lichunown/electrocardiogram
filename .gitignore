@@ -1,5 +1,6 @@
 *.txt
 *.zip
 *.npy
+*.h5
 .spyproject
 __pycache__/

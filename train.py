@@ -20,7 +20,7 @@ def valid(dataloader, model, device, log):
         for i, batchs in enumerate(dataloader):
             sig, other, label = batchs['sig'].to(device), batchs['other'].to(device), batchs['label'].to(device)
             out = net(sig, other)
-            f1, accuracy, recall = f1_score(out.cpu().data.numpy(), label)
+            f1, accuracy, recall = f1_score(out.cpu().data.numpy(), label.cpu().data.numpy())
             f1_all.append(f1)
             acc_all.append(accuracy)
             recall_all.append(recall)

@@ -36,7 +36,7 @@ class ECDDataset(Dataset):
         
     @property
     def label_info(self):
-        return self.self.arrythmia_dict
+        return self.arrythmia_dict
     
     def to_array(self, data_list:list):
         # input like this: ['57', 'MALE', '窦性心律', '一度房室传导阻滞', 'QRS低电压', '临界ECG']
@@ -67,10 +67,27 @@ class ECDDataset(Dataset):
         y, age, m_or_f = self.label_file_dir[self.sig_names[index]]
         other_data = [age, m_or_f]  
 
-        return {'sig':Normalize.sig_normlize(sig_data).transpose(1, 0).astype('float32'), 
-                'other':Normalize.other_normlize(np.array(other_data)).astype('float32'), 
-                'label':y.astype('float32')}
-    
+        return {
+                    'sig':Normalize.sig_normlize(sig_data).transpose(1, 0).astype('float32'), 
+                    'other':Normalize.other_normlize(np.array(other_data)).astype('float32'), 
+                    'label':y.astype('float32'),
+                    'index':index,
+               }
+        
+    def index_info(self, index): 
+        with open(os.path.join(self.sig_dir, self.sig_names[index]), 'r') as f:
+            f.readline()
+            sig_data = np.zeros([5000, 8])
+            for i, line in enumerate(f):
+                sig_data[i] = [float(i) for i in line.split()]
+        
+        y, age, m_or_f = self.label_file_dir[self.sig_names[index]]
+        return {
+                'name': self.sig_names[index],
+                'age': None if age is -1 else int(age),
+                'm_or_f': None if m_or_f==0.5 else 'MALE' if m_or_f==0 else 'FEMALE'
+             }
+        
     def __len__(self):
         return len(self.sig_names)
     
