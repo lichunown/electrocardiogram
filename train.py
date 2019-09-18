@@ -13,6 +13,9 @@ n_cpu = 6
 
 save_dir = 'save_model'
 
+load_model = True
+load_model_path = 'save_model/model.h5'
+
 def valid(dataloader, model, device, log):
     with torch.no_grad():
         model.eval()
@@ -24,7 +27,7 @@ def valid(dataloader, model, device, log):
             f1_all.append(f1)
             acc_all.append(accuracy)
             recall_all.append(recall)
-            log.logging_flush(f'      validing      b:{i}/{len(dataloader)}  ')
+            log.logging_flush(f'      valid         b:{i}/{len(dataloader)}  ')
         f1_all, acc_all, recall_all = np.mean(f1_all), np.mean(acc_all), np.mean(recall_all)
         log.logging(f'f1:{f1_all}  acc:{acc_all}  recall:{recall_all}')
         return f1_all
@@ -45,10 +48,12 @@ if __name__ == '__main__':
     dataloader = DataLoader(train_set, batch_size=batch_size, num_workers=n_cpu, sampler=RandomSampler(train_split))
     valid_dataloader = DataLoader(train_set, batch_size=batch_size, num_workers=n_cpu, sampler=RandomSampler(val_split))
     
-    
-    net = ConvModel(1024, 2).to(device)
+    if load_model:
+        with open(load_model_path, 'rb') as f:
+            net = log.load_model().to(device)
+    else:
+        net = ConvModel(1024, 2).to(device)
     optimizer = torch.optim.Adam(net.parameters())
-    
     
     loss_func = F.binary_cross_entropy
     

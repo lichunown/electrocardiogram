@@ -32,6 +32,13 @@ class Log(object):
         if eval_f1 > self.info['eval_f1']:
             self._save_model(model)
             self.info['eval_f1'] = eval_f1
+            self.save_info()
+            
+    def load_model(self):
+        path = os.path.join(self.save_model_dir, 'model.h5')
+        with open(path, 'rb') as f:
+            self.logging(f'loaded model: {path}(f1={self.info["eval_f1"]}) and continue trainning...')
+            return torch.load(f)
             
     def _save_model(self, model):
         with open(os.path.join(self.save_model_dir, 'model.h5'), 'wb') as f:
